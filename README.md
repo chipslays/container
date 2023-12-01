@@ -1,6 +1,6 @@
 # 📦 DI Container
 
-Yet another dependency injection container implementation with PSR-11 compliant for PHP >8.0.
+Yet another implementation of dependency injection container with PSR-11 compliant for PHP >8.0.
 
 ## Installation
 
