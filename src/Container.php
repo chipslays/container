@@ -161,19 +161,34 @@ class Container implements ContainerInterface
         foreach ($dependencies as $dependency) {
             if (array_key_exists($dependency->name, $parameters)) {
                 $resolvedDependencies[] = $parameters[$dependency->name];
-            } elseif (($type = $dependency->getType()) && array_key_exists($type->getName(), $parameters)) {
-                $resolvedDependencies[] = $parameters[$type->getName()];
-            } elseif ($dependency->isDefaultValueAvailable()) {
-                $resolvedDependencies[] = $dependency->getDefaultValue();
-            } else {
-                if ($type && isset($this->bindings[$type->getName()])) {
-                    $resolvedDependencies[] = $this->get($type->getName());
-                } elseif (isset($this->bindings[$dependency->name])) {
-                    $resolvedDependencies[] = $this->get($dependency->name);
-                } else {
-                    throw new NotFoundException("Unable to resolve dependency: '[{$type?->getName()}] \${$dependency->name}'");
-                }
+                continue;
             }
+
+            /** @var ?string getName() */
+            $paramType = $dependency->getType();
+            $paramTypeName = $paramType?->getName();
+
+            if ($paramTypeName && array_key_exists($paramTypeName, $parameters)) {
+                $resolvedDependencies[] = $parameters[$paramTypeName];
+                continue;
+            }
+
+            if ($dependency->isDefaultValueAvailable()) {
+                $resolvedDependencies[] = $dependency->getDefaultValue();
+                continue;
+            }
+
+            if ($paramTypeName && isset($this->bindings[$paramTypeName])) {
+                $resolvedDependencies[] = $this->get($paramTypeName);
+                continue;
+            }
+
+            if (isset($this->bindings[$dependency->name])) {
+                $resolvedDependencies[] = $this->get($dependency->name);
+                continue;
+            }
+
+            throw new NotFoundException("Unable to resolve dependency: [{$paramTypeName}] \${$dependency->name}");
         }
 
         return $resolvedDependencies;
