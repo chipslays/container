@@ -10,7 +10,7 @@ composer require please/container
 
 ## Basic usage
 
-This example always return a new instance of `Mailer`.
+This example always returns a new instance of `Mailer`.
 
 ```php
 use Please\Container\Container;
@@ -25,7 +25,7 @@ $container->bind(Mailer::class, function (Getter $get) {
 /** @var Mailer */
 $mailer = $container->get(Mailer::class, [
   'user' => 'admin',
-  // and password `qwerty` as default value
+  // and password `qwerty` (default value)
 ]);
 ```
 
@@ -89,10 +89,13 @@ $container->get('baz') // returns `baz`
 
 Generates a singleton instance of a class.
 
+> Singleton method always returns same value or instance like typical singleton pattern.
+
 ```php
-// always returns the same value
 $container->singleton('timestamp', fn () => time());
-$container->bind('timestamp', fn () => time(), true);
+
+// or use bind class and `shared` parameter
+$container->bind('timestamp', fn () => time(), shared: true);
 ```
 
 Check if the container has a binding or instance for the given abstract.
@@ -116,7 +119,11 @@ class Container extends BaseContainer
     use Singleton;
 }
 
+...
+
 $container = Container::getInstance();
+
+...
 ```
 
 You can also check singleton example [here](/examples/singleton.php).
