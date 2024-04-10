@@ -3,13 +3,16 @@
     "type": "library",
     "keywords": ["container", "php-container", "php-di"],
     "license": "MIT",
-    "require": {
-        "php": "^8.1",
-        "psr/container": "^2.0"
-    },
     "autoload": {
         "psr-4": {
             "Please\\Container\\": "src/"
         }
+    },
+    "require": {
+        "php": "^8.0",
+        "psr/container": "^1.0|^2.0"
+    },
+    "require-dev": {
+        "symfony/var-dumper": "^7.0"
     }
 }
