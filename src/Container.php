@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Please\Container;
 
+use Please\Container\Support\Getter;
 use Please\Container\Exceptions\ContainerException;
 use Please\Container\Exceptions\NotFoundException;
 use Psr\Container\ContainerInterface;
@@ -73,20 +76,19 @@ class Container implements ContainerInterface
      *
      * @param string $abstract The abstract to construct an instance of.
      * @param array $parameters An array of parameters to pass to the constructor.
-     * @return mixed The constructed instance of the abstract.
-     *
      * @throws NotFoundException If the dependency cannot be resolved.
+     * @return mixed The constructed instance of the abstract.
      */
     public function get(string $abstract, array $parameters = []): mixed
     {
-        if (!isset($this->bindings[$abstract])) {
+        if (!$this->has($abstract)) {
             throw new NotFoundException("Unable to resolve dependency: '{$abstract}'");
         }
 
         $concrete = $this->bindings[$abstract]['concrete'];
         $shared = $this->bindings[$abstract]['shared'];
 
-        if ($shared && isset($this->instances[$abstract])) {
+        if ($shared && array_key_exists($abstract, $this->instances)) {
             return $this->instances[$abstract];
         }
 
@@ -107,7 +109,7 @@ class Container implements ContainerInterface
      */
     public function has(string $abstract): bool
     {
-        return isset($abstract, $this->bindings) || isset($abstract, $this->instances);
+        return isset($this->bindings[$abstract]) || isset($this->instances[$abstract]);
     }
 
     /**
@@ -115,14 +117,14 @@ class Container implements ContainerInterface
      *
      * @param mixed $concrete The concrete implementation of the class to build.
      * @param array $parameters An array of parameters to be passed to the class constructor.
+     * @throws ContainerException If the concrete implementation is not instantiable or cannot be resolved.
+     * @throws NotFoundException If a dependency cannot be resolved.
      * @return mixed An instance of the class.
-     *
-     * @throws ContainerException if the class is not instantiable.
      */
     protected function build(mixed $concrete, array $parameters = []): mixed
     {
         if ($concrete instanceof Closure) {
-            return $concrete($this, $parameters);
+            return $concrete(new Getter($parameters));
         }
 
         if (!is_string($concrete) || !class_exists($concrete)) {
@@ -152,6 +154,7 @@ class Container implements ContainerInterface
      *
      * @param ReflectionParameter[] $dependencies The array of dependencies to be resolved.
      * @param array $parameters Optional. The array of parameters to be used for resolving dependencies.
+     * @throws NotFoundException If a dependency cannot be resolved.
      * @return array The resolved dependencies.
      */
     protected function resolveDependencies(array $dependencies, array $parameters = []): array
