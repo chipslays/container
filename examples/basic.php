@@ -1,6 +1,7 @@
 <?php
 
 use Please\Container\Container;
+use Please\Container\Support\Getter;
 
 require __DIR__ . '/../vendor/autoload.php';
 
@@ -20,8 +21,8 @@ dump($container->get(Foo::class));
 $container->bind(Foo::class);
 dump($container->get(Foo::class, ['value' => 'bar']));
 
-$container->bind(Foo::class, function (Container $container, array $parameters) {
-    return new Foo($parameters['value']);
+$container->bind(Foo::class, function (Getter $get) {
+    return new Foo($get('value'));
 });
 dump($container->get(Foo::class, ['value' => 'bar']));
 
