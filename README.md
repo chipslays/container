@@ -9,6 +9,9 @@ composer require please/container
 ```
 
 ## Basic usage
+
+This example always return a new instance of `Mailer`.
+
 ```php
 use Please\Container\Container;
 use Please\Container\Support\Getter;
@@ -20,20 +23,23 @@ $container->bind(Mailer::class, function (Getter $get) {
 });
 
 /** @var Mailer */
-$foo = $container->get(Mailer::class, [
+$mailer = $container->get(Mailer::class, [
   'user' => 'admin',
-  'password' => 'qwerty',
+  // and password `qwerty` as default value
 ]);
 ```
+
+This example always return a same time.
 
 ```php
 use Please\Container\Container;
 
 $container = new Container;
 
-$container->singleton('timestamp', fn () => time());
+$container->singleton('random', fn () => rand());
 
-echo $container->get('timestamp'); // always returns the same value
+echo $container->get('random'); // 1234567890
+echo $container->get('random'); // 1234567890
 ```
 
 ## Examples
