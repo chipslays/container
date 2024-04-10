@@ -31,7 +31,7 @@ class Container implements ContainerInterface
     /**
      * Binds an abstract class/interface to a concrete implementation.
      *
-     * @param string|array $abstract String or array of abstract class/interface/alias to bind.
+     * @param string|string[] $abstract String or array of abstract class/interface/alias to bind.
      * @param mixed $concrete The concrete implementation to bind. If not provided, the abstract class/interface itself will be used.
      * @param bool $shared Determines if the binding is shared or not. Default is false.
      */
