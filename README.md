@@ -11,11 +11,12 @@ composer require please/container
 ## Basic usage
 ```php
 use Please\Container\Container;
+use Please\Container\Support\Getter;
 
 $container = new Container;
 
-$container->bind(Mailer::class, function (Container $container, array $parameters) {
-    return new Mailer::($parameters['user'], $parameters['password']);
+$container->bind(Mailer::class, function (Getter $get) {
+    return new Mailer::($get('user'), $get('password', 'qwerty')); // qwerty - default value
 });
 
 /** @var Mailer */
